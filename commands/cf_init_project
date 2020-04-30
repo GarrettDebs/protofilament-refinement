@@ -1,0 +1,10 @@
+#!/usr/bin/env python
+from chuff_parser import ChuffGooey
+from cryofilia.project import CFProject
+@ChuffGooey
+def my_func():
+    project = CFProject.new_from_command_line()
+    project.run()
+
+if __name__ == "__main__":
+    my_func()
