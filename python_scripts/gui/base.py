@@ -20,7 +20,7 @@ class gdGui():
         self.addButton()
         
         self.top.mainloop()
-        
+                
     def addVars(self, **kwargs):
         self.bool_vars={}
         self.entry_label={}
@@ -61,9 +61,15 @@ class gdGui():
                                                                 column=1)
         
     def returnValues(self):
+        self.vals={}
         for key in self.bool_vars:
             logging.warning('No booleans in returnValues yet!')
         
         for key in self.entry_vars:
-            print self.entry_vars[key].get()    
+            self.vals[key]=self.entry_vars[key].get()
+            
+        self.top.destroy()
+            
+    def sendValues(self):
+        return self.vals  
              

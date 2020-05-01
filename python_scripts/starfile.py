@@ -1,7 +1,8 @@
+from info_file import InfoFile
 import pandas as pd
 import numpy as np
 
-class StarFile():
+class StarFile(InfoFile):
     def __init__(self, file):
         self.readStar(file)
         
