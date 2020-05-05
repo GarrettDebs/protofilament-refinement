@@ -7,8 +7,8 @@ import os
 import logging
 import warnings
 import mrcfile
-import cupy as np
-import cupyx.scipy.ndimage
+import numpy as np
+import scipy.ndimage
 import scipy.ndimage.fourier as fourier
 import scipy.misc
 

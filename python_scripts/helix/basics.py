@@ -1,13 +1,34 @@
-import cupy as np
-try:
-    import sparx as sx
-    import EMAN2 as e2
-except:
-    pass
+import numpy as np
+import cupy as cp
 
 from tqdm import tqdm
 
 import util3d as cf
+
+def subunitsToUse(rise_per_subunit, num_pfs=13, num_starts=1.5, shift=True):
+    index=0
+    out=np.zeros([len(range(int(-2*num_starts),int(2*num_starts+1)))*num_pfs,3])
+    
+    for i in range(int(-2*num_starts),int(2*num_starts+1)):
+        for j in range(0,num_pfs):
+            z = i*num_pfs*rise_per_subunit/num_starts + (j)*rise_per_subunit;
+            out[index,0]=i
+            out[index,1]=j
+            out[index,2]=z
+            index += 1
+            
+    out=out[out[:,2].argsort()]
+    if shift:
+        lowerb=np.nonzero(out[:,2]>=-(rise_per_subunit*num_pfs/(num_starts*2)))
+        upperb=np.nonzero(out[:,2]<(rise_per_subunit*num_pfs/(num_starts*2)))
+    else:
+        lowerb=np.nonzero(out[:,2]>=0)
+        upperb=np.nonzero(out[:,2]<(rise_per_subunit*num_pfs/(num_starts)))
+                          
+    inter=np.intersect1d(lowerb,upperb)
+    use=out[inter]
+    use=use[use[:,1].argsort()]
+    return use
 
 def expand_helical_parameters(rise_per_subunit, twist_per_subunit, num_pfs=None, num_starts=1):
     """axial_repeat_dist, twist_per_repeat, supertwist, num_pfs, num_starts = expand_helical_parameters(...)

@@ -38,7 +38,7 @@ class gdGui():
                 self.bool_box[key]=tk.Checkbutton(self.top, text=key, \
                                              variable=self.bool_vars[key])
                 
-            elif item is 'XXXFILENAMEXXX':
+            elif item is 'XXXINPUTFILEXXX':
                 self.file_var=tk.Entry(self.top)
                 self.file_button=tk.Button(self.top, text='Browse Files', \
                                            command=self.addFile)

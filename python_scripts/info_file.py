@@ -11,6 +11,7 @@ class InfoFile(object):
             self.readInfo(file)
         except:
             logging.warning('No info file, initialize the project.')
+            exit()
             
     def readInfo(self, file):
         f=open(file)
@@ -30,8 +31,10 @@ class InfoFile(object):
         
         f.close()
         
+        self.pixel_size=self.micrograph_pixel_size
+        
         self.rise_per_subunit=(self.dimer_repeat_dist*self.num_starts)/self.num_pfs
-        self.twist_per_subunit=(360-self.helical_twist/self.num_starts)/self.num_pfs
+        self.twist_per_subunit=(360-self.helical_twist)/self.num_pfs
         print 'micrograph_pixel_size: %g num_pfs: %d dimer_repeat: %g twist: %g'\
         %(self.micrograph_pixel_size, self.num_pfs, self.dimer_repeat_dist, self.helical_twist)
         

@@ -105,7 +105,7 @@ class PDB(object):
         return p_copy
 
     def symmetrize(self, symm_a, inplace=False):
-        '''Symmetrize the pdb according to the tranformation matrix.
+        '''Symmetrize the pdb according to the transformation matrix.
 
             helical symmetry is:
             cosa, sina, 0, 0
