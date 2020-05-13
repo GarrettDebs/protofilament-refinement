@@ -1,7 +1,10 @@
-import cupy as np
-import cupyx.scipy.ndimage
-
-import cupyx.scipy.fftpack
+try:
+    nope
+    import cupy as np
+    from cupyx.scipy import ndimage, fftpack
+except:
+    import numpy as np
+    from scipy import ndimage, fftpack
 
 from tqdm import tqdm
 
@@ -70,7 +73,7 @@ def spherical_cosmask(n,mask_radius, edge_width, origin=None):
 
     r = np.sqrt(x*x + y*y + z*z)
 
-    m = np.zeros(sz)
+    m = np.zeros(sz.tolist())
 
 #    edgezone = np.where( (x*x + y*y + z*z >= mask_radius) & (x*x + y*y + z*z <= np.square(mask_radius + edge_width)))
 
@@ -93,7 +96,7 @@ def rotshift3D_spline(v, phi=0, shifts=np.array([0,0,0]), mode='wrap'):
     offset = -(rot_origin-rot_origin.dot(rot_matrix)).dot(np.linalg.inv(rot_matrix))
     offset = offset - shifts
 
-    transformed_v = scipy.ndimage.interpolation.affine_transform(v,rot_matrix,offset=offset,mode=mode)
+    transformed_v = ndimage.interpolation.affine_transform(v,rot_matrix,offset=offset,mode=mode)
 
     return transformed_v
 
@@ -268,15 +271,15 @@ def soft_mask(v, voxel_size, num_subunit_residues,
 
     progress_bar = tqdm(total=5)
 
-    v_thresh = scipy.fftpack.fftn(v_thresh)
+    v_thresh = fftpack.fftn(v_thresh)
     progress_bar.update(1)
 # 3
     cosmask_filter = np.fft.fftshift(spherical_cosmask(sz, 0, np.ceil(filter_resolution/voxel_size)))
-    cosmask_filter = scipy.fftpack.fftn(cosmask_filter) / np.sum(cosmask_filter)
+    cosmask_filter = fftpack.fftn(cosmask_filter) / np.sum(cosmask_filter)
     progress_bar.update(1)
 
     v_thresh = v_thresh * cosmask_filter
-    v_thresh = scipy.fftpack.ifftn(v_thresh)
+    v_thresh = fftpack.ifftn(v_thresh)
     progress_bar.update(1)
     v_thresh = np.real(v_thresh)
     v_thresh[np.abs(v_thresh) < 10*np.finfo(type(v_thresh.ravel()[0])).eps] = 0
@@ -288,11 +291,11 @@ def soft_mask(v, voxel_size, num_subunit_residues,
 #  we therefore need to divide filter_res by 4 to get the 
 #  desired radius for spherical_cosmask.
 
-    v_thresh = scipy.fftpack.fftn(v_thresh)
+    v_thresh = fftpack.fftn(v_thresh)
     progress_bar.update(1)
 
     v_thresh = v_thresh * cosmask_filter
-    v_thresh = scipy.fftpack.ifftn(v_thresh)
+    v_thresh = fftpack.ifftn(v_thresh)
     progress_bar.update(1)
     v_thresh = np.real(v_thresh)
     v_thresh[np.abs(v_thresh) < 10*np.finfo(type(v_thresh.ravel()[0])).eps] = 0

@@ -26,6 +26,9 @@ class gdGui():
         self.bool_vars={}
         self.bool_box={}
         
+        self.file_var={}
+        self.file_button={}
+        
         self.entry_label={}
         self.entry_vars={}        
         
@@ -38,23 +41,56 @@ class gdGui():
                 self.bool_box[key]=tk.Checkbutton(self.top, text=key, \
                                              variable=self.bool_vars[key])
                 
-            elif item is 'XXXINPUTFILEXXX':
-                self.file_var=tk.Entry(self.top)
-                self.file_button=tk.Button(self.top, text='Browse Files', \
-                                           command=self.addFile)
+            elif item.startswith('XXX'):
+                self.addFile(key, item)
             
             else:
                 pretty_var=' '.join(key.split('_')).title()
                 self.entry_label[key]=tk.Label(self.top, text=pretty_var)
                 self.entry_vars[key]=tk.Entry(self.top)
                 self.entry_vars[key].insert(0, item)
-                
-    def addFile(self):
-        self.top.filename = tkFileDialog.askopenfilename\
-        (initialdir = ".",title = "Select file",filetypes = \
-         (("star files","*.star"),("all files","*.*")))
-        self.file_var.insert(0, self.top.filename)
     
+    def addMrcFile(self, key):            
+        self.top.filename = tkFileDialog.askopenfilename\
+            (initialdir = ".",title = "Select file",filetypes = \
+             (("MRC files","*.mrc"),("all files","*.*")))
+        
+        self.file_var[key].delete(0,'end')
+        self.file_var[key].insert(0, self.top.filename)
+    
+    def addStarFile(self, key):            
+        self.top.filename = tkFileDialog.askopenfilename\
+            (initialdir = ".",title = "Select file",filetypes = \
+            (("star files","*.star"),("all files","*.*")))
+            
+        self.file_var[key].delete(0,'end')
+        self.file_var[key].insert(0, self.top.filename)
+        
+    def addAllFile(self, key):            
+        self.top.filename = tkFileDialog.askopenfilename\
+            (initialdir = ".",title = "Select file")
+            
+        self.file_var[key].delete(0,'end')
+        self.file_var[key].insert(0, self.top.filename)
+        
+    def addFile(self, key, item):
+        self.file_var[key]=tk.Entry(self.top)
+        pretty_var=' '.join(key.split('_')).title()
+        self.file_var[key].insert(0, pretty_var)
+        
+        if 'MRC' in item:
+            self.file_button[key]=tk.Button(self.top, text='Browse Files', \
+                                        command=lambda var=key: self.addMrcFile(var))
+
+        elif 'STAR' in item:
+            self.file_button[key]=tk.Button(self.top, text='Browse Files', \
+                                        command=lambda var=key: self.addStarFile(var))
+            
+        else:
+            self.file_button[key]=tk.Button(self.top, text='Browse Files', \
+                                        command=lambda var=key: self.addAllFile(var))
+        
+                    
     def packVars(self):
         num_bools=len(self.bool_vars)
         num_entry=len(self.entry_vars)
@@ -64,12 +100,10 @@ class gdGui():
         logging.info('For now only dealing with two columns')
         self.i=0
         
-        try:
-            self.file_var.grid(row=0, column=0)
-            self.file_button.grid(row=0, column=1)
-            self.i+=1
-        except:
-            pass                
+        for key in self.file_var:
+            self.file_var[key].grid(row=self.i, column=0)
+            self.file_button[key].grid(row=self.i, column=1)
+            self.i+=1             
         
         for key in self.bool_vars:
             self.bool_box[key].grid(row=self.i, column=0)
@@ -87,11 +121,8 @@ class gdGui():
     def returnValues(self):
         self.vals={}
         
-        ###Check if there is a file name variable
-        try:
-            self.vals['filename']=self.top.filename
-        except:
-            pass
+        for key in self.file_var:
+            self.vals[key]=self.file_var[key].get()
         
         for key in self.bool_vars:
             self.vals[key]=self.bool_vars[key].get()
