@@ -8,16 +8,17 @@ from info_file import InfoFile
 from gui.base import gdGui
 import os
 import pdb_util
-from helix.basics import helical_wedge_mask, subunitsToUse
 from EMImage import EMImage
 from util3d import spherical_cosmask
-from cupyx.scipy.ndimage.interpolation import affine_transform
+from tqdm import tqdm
+from scipy.ndimage.interpolation import affine_transform
+
 
 class WedgeMasks(InfoFile):
     def __init__(self, info='info.txt', shift=True):
         super(WedgeMasks, self).__init__(info)
-        self.subunits_to_use=subunitsToUse(self.rise_per_subunit, self.num_pfs, \
-                               self.num_starts, shift)
+        #self.subunits_to_use=subunitsToUse(self.rise_per_subunit, self.num_pfs, \
+        #                       self.num_starts, shift)
         
     def getValues(self):
         vals=self.startingValues()
@@ -54,7 +55,7 @@ class WedgeMasks(InfoFile):
         
     def createWedge(self, subunit_num=0):
         ###Initialize the location of the protofilament to remove
-        theta0=np.arctan2(self.com[0], self.com[1])+\
+        theta0=np.arctan2(self.com[0], self.com[1])-\
         np.deg2rad(subunit_num*self.twist_per_subunit)
             
         z0=(self.com[2]+self.rise_per_subunit*subunit_num)/self.pixel_size
@@ -70,7 +71,8 @@ class WedgeMasks(InfoFile):
         wedge=np.zeros(self.vol_dim.tolist())
         
         ###Define the size of the wedgemask
-        fudge=np.deg2rad(360.0/(self.num_pfs*2))
+        #fudge=np.deg2rad(360.0/(self.num_pfs*2))
+        fudge=np.deg2rad(16)
         
         ###Generate the wedge mask
         for i in range(len(theta)):
@@ -79,23 +81,48 @@ class WedgeMasks(InfoFile):
             inds=np.logical_and(self.radmatrix>above,self.radmatrix<below)
             wedge[i,:,:][inds]=1
             
-        ###Make a soft mask
+        return wedge
+    
+    def cosmask_filter(self):
         edge_resolution=20
         edge_width = self.pixel_size * np.ceil(edge_resolution/(2*self.pixel_size))
         cosmask_filter = np.fft.fftshift(spherical_cosmask(self.vol_dim, 0, edge_width / self.pixel_size))
-        cosmask_filter = np.fft.fftn(cosmask_filter) / np.sum(cosmask_filter)
-        soft_m = np.real(np.fft.ifftn( cosmask_filter * np.fft.fftn(wedge)))
-        soft_m[soft_m<0]=0
-        
-        
-        return EMImage(soft_m)
+        self.cosmask_filter = np.fft.fftn(cosmask_filter) / np.sum(cosmask_filter)
+    
+    def rotshift3D_spline(self, v, eulers, shifts=np.array([0,0,0]), mode='wrap'):
+    # With a nod to:
+    #  http://stackoverflow.com/questions/20161175/how-can-i-use-scipy-ndimage-interpolation-affine-transform-to-rotate-an-image-ab
+        print shifts
+        print eulers
+        rot_origin = 0.5*np.array(v.shape)
+        rot_rad = -np.deg2rad(eulers)
+        phi = np.array([[np.cos(rot_rad[0]), np.sin(rot_rad[0]), 0],
+                               [-np.sin(rot_rad[0]),np.cos(rot_rad[0]), 0],
+                               [0                , 0              , 1]])
+        theta=np.array([[np.cos(rot_rad[1]), 0,-np.sin(rot_rad[1])],[0,1,0],\
+                            [np.sin(rot_rad[1]), 0, np.cos(rot_rad[1])]])
+        psi=np.array([[np.cos(rot_rad[2]), np.sin(rot_rad[2]), 0],\
+                          [-np.sin(rot_rad[2]),np.cos(rot_rad[2]), 0],\
+                          [0,0,1]])
+        rot_matrix=np.dot(np.dot(phi,theta),psi)
+        offset = -(rot_origin-rot_origin.dot(rot_matrix)).dot(np.linalg.inv(rot_matrix))
+        offset = offset - shifts
+        transformed_v = affine_transform(v,rot_matrix,offset=offset,mode=mode)
+        return transformed_v
     
     def makeMasks(self):
-        for pf in range(self.num_pfs)[:1]:
+        self.cosmask_filter()
+        #hard_wedge=self.createWedge()
+        rot=self.twist_per_subunit*np.arange(self.num_pfs)
+        
+        for pf in tqdm(range(self.num_pfs)[:2]):
             if not os.path.isdir('pf%g'%pf):
                 os.mkdir('pf%g'%pf)
-                
-            wedge=self.createWedge(pf)
+
+            rot_wedge=self.createWedge(pf)
+            soft_m = np.real(np.fft.ifftn(self.cosmask_filter * np.fft.fftn(rot_wedge)))
+            soft_m[soft_m<0]=0
+            wedge=EMImage(soft_m)            
             wedge.write_mrc('pf%g/pf_wedge.mrc'%pf)
             wedge.add(-1)
             wedge.mult(-1)
