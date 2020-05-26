@@ -1,0 +1,17 @@
+name: pf_refinement
+dependencies:
+    - python=2.7
+    - mrcfile
+    - cycler
+    - mpi4py
+    - matplotlib
+    - numpy
+    - olefile
+    - Pillow
+    - pyparsing
+    - python-dateutil
+    - pytx
+    - scipy
+    - six
+    - subprocess
+    - tqdm
