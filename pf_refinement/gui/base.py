@@ -41,7 +41,7 @@ class gdGui():
                 self.bool_box[key]=tk.Checkbutton(self.top, text=key, \
                                              variable=self.bool_vars[key])
                 
-            elif item.startswith('XXX'):
+            elif type(item) is str and item.startswith('XXX'):
                 self.addFile(key, item)
             
             else:

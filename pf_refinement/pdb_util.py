@@ -12,7 +12,7 @@
     p1.write("out.pdb")  # write to file
 '''
 from collections import OrderedDict
-import cupy as np
+import numpy as np
 
 # The common used element in pdb
 ELEMENT_DEFS = {'H' : (1.0, 1.00794),

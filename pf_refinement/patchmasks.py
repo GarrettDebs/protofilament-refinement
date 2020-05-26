@@ -50,7 +50,7 @@ class WedgeMasks(InfoFile):
         #temp=np.arctan2(y, x)
         #temp=np.reshape(temp,(size*2,size*2,1))
         #self.radmatrix=np.repeat(temp, size*2, axis=2)
-        self.radmatrix=np.arctan2(x, y)
+        self.radmatrix=np.remainder(np.arctan2(x, y)+2*np.pi,2*np.pi)-2*np.pi
         self.zline=np.arange(-size+1,size+1)
         
     def createWedge(self, subunit_num=0):
@@ -76,11 +76,22 @@ class WedgeMasks(InfoFile):
         
         ###Generate the wedge mask
         for i in range(len(theta)):
-            above=theta[i]-fudge
-            below=theta[i]+fudge
-            inds=np.logical_and(self.radmatrix>above,self.radmatrix<below)
+            temp1=np.remainder(theta[i]-fudge+2*np.pi,2*np.pi)-2*np.pi
+            temp2=np.remainder(theta[i]+fudge+2*np.pi,2*np.pi)-2*np.pi
+            angles=[temp1, temp2]
+            if max(angles)-min(angles)>2*fudge+.2:
+                above=max(angles)
+                below=min(angles)
+                inds=np.logical_or(self.radmatrix>above,self.radmatrix<below)
+            else:
+                above=min(angles)
+                below=max(angles)
+                inds=np.logical_and(self.radmatrix>above,self.radmatrix<below)
+                
             wedge[i,:,:][inds]=1
             
+        print above, below
+        print np.rad2deg(above), np.rad2deg(below)
         return wedge
     
     def cosmask_filter(self):
@@ -115,7 +126,7 @@ class WedgeMasks(InfoFile):
         #hard_wedge=self.createWedge()
         rot=self.twist_per_subunit*np.arange(self.num_pfs)
         
-        for pf in tqdm(range(self.num_pfs)[:2]):
+        for pf in tqdm(range(self.num_pfs)):
             if not os.path.isdir('pf%g'%pf):
                 os.mkdir('pf%g'%pf)
 
