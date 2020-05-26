@@ -6,7 +6,7 @@ from setuptools import setup
 setup(
     name="pf_refinement",
     version="0.1",
-    description="A tool to track your diet from pictures of your food.",
+    description="A cryo-EM reconstruction technique to more precisely refine microtubule structures",
     packages=["pf_refinement"],
     scripts=[
         "command/cf_init_project",
