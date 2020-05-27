@@ -1,2 +1,1 @@
-def foo():
-    return
+from base import gdGui

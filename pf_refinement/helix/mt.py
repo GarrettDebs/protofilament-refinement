@@ -1,4 +1,4 @@
-import cupy as np
+import numpy as np
 
 def mt_lattice_params(num_pfs, num_starts, dimer_repeat_dist, radius13pf):
 
