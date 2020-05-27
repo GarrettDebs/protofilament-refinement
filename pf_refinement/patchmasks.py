@@ -65,7 +65,7 @@ class WedgeMasks(InfoFile):
                                    (self.num_starts*self.pixel_size))
         
         ###Define the angle of the center of the protofilament along the length of the segment
-        theta=np.deg2rad((360-self.twist_per_subunit*self.num_pfs)*zsubunits)-theta0
+        theta=np.deg2rad((self.twist_per_subunit*self.num_pfs-360)*zsubunits)-theta0
         
         ###Initialize the wedge mask
         wedge=np.zeros(self.vol_dim.tolist())
