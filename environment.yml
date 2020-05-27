@@ -15,5 +15,5 @@ dependencies:
     - pytz
     - tqdm
     - pip:
-            - mrcfile==0.2.10
+            - mrcfile
             
