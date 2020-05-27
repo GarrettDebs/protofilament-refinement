@@ -4,7 +4,7 @@ try:
 except:
     import numpy as np
 
-from info_file import InfoFile
+from pf_refinement import InfoFile
 from gui.base import gdGui
 import os
 import pdb_util

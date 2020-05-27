@@ -1,3 +1,5 @@
+from info_file import *
+from patchmasks import *
 from .helix.basics import (expand_helical_parameters, get_helical_transform, 
                            get_helix_subunit_list, helical_wedge_mask, 
                            symmetrize_filament_by_subunit, symmetrize_filament_by_repeat, symmetrize_filament)
@@ -20,10 +22,10 @@ def report_error(e):
 
 # to Fix TclError: no display name and no $DISPLAY environment variable,
 # with no gui interface needed
-import __main__ as tmp_main
-import matplotlib
-if hasattr(tmp_main, '__file__'):
-    matplotlib.use('Agg')
-else:
-    matplotlib.use('TkAgg')
+#import __main__ as tmp_main
+#import matplotlib
+#if hasattr(tmp_main, '__file__'):
+#    matplotlib.use('Agg')
+#else:
+#    matplotlib.use('TkAgg')
 

@@ -1,15 +1,17 @@
 """
 Setup file for AIdiet.
 """
-from setuptools import setup
+import setuptools
 
-setup(
+setuptools.setup(
     name="pf_refinement",
     version="0.1",
+    author="Garrett Debs",
+    author_email='gedebs37@gmail.com',
     description="A cryo-EM reconstruction technique to more precisely refine microtubule structures",
-    packages=["pf_refinement"],
+    packages=setuptools.find_packages(),
     scripts=[
-        "command/cf_init_project",
+        "commands/cf_init_project",
         "commands/cf_patch_masks"
         ]
 )

@@ -3,7 +3,7 @@ import cupy as cp
 
 from tqdm import tqdm
 
-import util3d as cf
+import pf_refinement.util3d as cf
 
 def subunitsToUse(rise_per_subunit, num_pfs=13, num_starts=1.5, shift=True):
     index=0
