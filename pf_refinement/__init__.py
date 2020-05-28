@@ -1,5 +1,6 @@
 from info_file import *
 from patchmasks import *
+from relion_subtract import *
 from .helix.basics import (expand_helical_parameters, get_helical_transform, 
                            get_helix_subunit_list, helical_wedge_mask, 
                            symmetrize_filament_by_subunit, symmetrize_filament_by_repeat, symmetrize_filament)

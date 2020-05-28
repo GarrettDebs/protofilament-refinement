@@ -12,6 +12,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     scripts=[
         "commands/cf_init_project",
-        "commands/cf_patch_masks"
+        "commands/cf_patch_masks",
+        "commands/cf_relion_subtract"
         ]
 )
