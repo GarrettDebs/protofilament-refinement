@@ -8,6 +8,7 @@ import os
 
 if __name__ == "__main__":
     comm=MPI.COMM_WORLD
+    rank=comm.Get_rank()
     size=comm.Get_size()
     
     if size>1:
@@ -24,10 +25,10 @@ if __name__ == "__main__":
             cores=min(a.cores, a.num_pfs)
             try:
                 slurm=os.environ['SLURM_NODELIST']
-                command='mpirun -host %s -np %g cf_relion_subtract '\
+                command='mpirun -host %s -n %g cf_relion_subtract '\
                 '--star_file %s'%(slurm, cores, a.star_file)
             except Exception:
-                command='mpirun -np %g cf_relion_subtract --star_file %s'\
+                command='mpirun -n %g cf_relion_subtract --star_file %s'\
                 %(cores, a.star_file)
             os.system(command)
         else:

@@ -29,8 +29,11 @@ class Sub(InfoFile):
         command='relion_project --i pf%g/pf_masked.mrc --o pf%g/sub_all --ctf '\
         '--angpix %g --ang %s --subtract_exp'%(pfnum, pfnum, self.pixel_size, \
                                                self.star_file)
-        check='Rank %g: pf%g'%(rank, pfnum)
-        print check
+        code=os.system(command)
+        if code!=0:
+            raise RuntimeError('RELION did not run properly. Try running the '
+                            'following command to troubleshoot \n\n'
+                            '%s \n'%command)
         
     def parallel(self):
         pfs=np.arange(self.num_pfs)
