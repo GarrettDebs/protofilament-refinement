@@ -25,6 +25,7 @@ class gdGui():
     def addVars(self, **kwargs):
         self.bool_vars={}
         self.bool_box={}
+        self.bool_label={}
         
         self.file_var={}
         self.file_button={}
@@ -34,12 +35,14 @@ class gdGui():
         
         for key, item in kwargs.items():
             if type(item) is bool:
-                ###Initialize the checkbox
-                self.bool_vars[key]=tk.BooleanVar()
-                self.bool_vars[key].set(item)
+                ###Initialize the variable. Set to string variable for display
+                self.bool_vars[key]=tk.StringVar()
+                self.bool_vars[key].set(str(item))
                 
-                self.bool_box[key]=tk.Checkbutton(self.top, text=key, \
-                                             variable=self.bool_vars[key])
+                pretty_var=' '.join(key.split('_')).title()
+                self.bool_label[key]=tk.Label(self.top, text=pretty_var)
+                self.bool_box[key]=tk.OptionMenu(self.top, self.bool_vars[key],
+                                                 *['True', 'False'])
                 
             elif type(item) is str and item.startswith('XXX'):
                 self.addFile(key, item)
@@ -106,7 +109,8 @@ class gdGui():
             self.i+=1             
         
         for key in self.bool_vars:
-            self.bool_box[key].grid(row=self.i, column=0)
+            self.bool_label[key].grid(row=self.i, column=0)
+            self.bool_box[key].grid(row=self.i, column=1)
             self.i+=1
             
         for key in self.entry_vars:
@@ -125,7 +129,7 @@ class gdGui():
             self.vals[key]=self.file_var[key].get()
         
         for key in self.bool_vars:
-            self.vals[key]=self.bool_vars[key].get()
+            self.vals[key]=self.bool_vars[key].get()=='True'
         
         for key in self.entry_vars:
             self.vals[key]=self.entry_vars[key].get()
@@ -133,5 +137,8 @@ class gdGui():
         self.top.destroy()
             
     def sendValues(self):
-        return self.vals  
+        try:
+            return self.vals
+        except Exception:
+            raise AttributeError('No variables were not defined in the GUI')  
              

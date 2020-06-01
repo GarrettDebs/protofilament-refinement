@@ -1,0 +1,42 @@
+#!/usr/bin/env python
+
+from pf_refinement import Sub, SubStar, StarOp
+from argparse import ArgumentParser
+from mpi4py import MPI
+import numpy as np
+import os
+
+if __name__ == "__main__":
+    comm=MPI.COMM_WORLD
+    rank=comm.Get_rank()
+    size=comm.Get_size()
+    
+    if size>1:
+        parser=ArgumentParser()
+        parser.add_argument('--star_file')
+        args=parser.parse_args()
+        
+        b=Sub(args.star_file, cores=size)
+        b.parallel()
+    else:
+        a=SubStar()
+        a()
+        
+        ###Generate the symmeterized starfile
+        sym=StarOp(a.star_file)
+        sym.symStar()
+        
+        if a.cores>1:
+            cores=min(a.cores, a.num_pfs)
+            try:
+                slurm=os.environ['SLURM_NODELIST']
+                command='mpirun -host %s -n %g cf_relion_subtract '\
+                '--star_file %s'%(slurm, cores, a.star_file)
+            except Exception:
+                command='mpirun -n %g cf_relion_subtract --star_file %s'\
+                %(cores, a.star_file)
+            os.system(command)
+        else:
+            b=Sub(a.star_file)
+            for i in range(a.num_pfs):
+                b(i)
