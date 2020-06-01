@@ -5,6 +5,7 @@ import numpy as np
 class StarFile(InfoFile):
     def __init__(self, file):
         self.readStar(file)
+        self.name=file
         
     def readStar(self, file):
         f=open(file)
@@ -38,10 +39,6 @@ class StarFile(InfoFile):
     def readBody(self, start, lines):
         body=[]
         
-        #while lines[-1].split()==[]:
-        #    print 'ha'
-        #    lines.pop(-1)
-        
         for i in range(start, len(lines)):
             temp=lines[i].split()
             ###Make sure that we aren't adding blank lines to the body
@@ -51,7 +48,8 @@ class StarFile(InfoFile):
         return np.array(body)
     
     def getHeader(self):
-        header=self.top
+        header=[]
+        header.extend(self.top)
         i=1
         for col in self.df.columns:
             header.append('_rln%s #%g\n'%(col, i))

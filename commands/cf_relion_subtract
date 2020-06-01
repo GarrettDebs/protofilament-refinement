@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from pf_refinement import Sub, SubStar
+from pf_refinement import Sub, SubStar, StarOp
 from argparse import ArgumentParser
 from mpi4py import MPI
 import numpy as np
@@ -21,6 +21,11 @@ if __name__ == "__main__":
     else:
         a=SubStar()
         a()
+        
+        ###Generate the symmeterized starfile
+        sym=StarOp(a.star_file)
+        sym.symStar()
+        
         if a.cores>1:
             cores=min(a.cores, a.num_pfs)
             try:

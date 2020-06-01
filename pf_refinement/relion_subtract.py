@@ -26,9 +26,9 @@ class Sub(InfoFile):
         self.cores=cores
         
     def __call__(self, pfnum, rank=0):
-        command='relion_project --i pf%g/pf_masked.mrc --o pf%g/sub_all --ctf '\
-        '--angpix %g --ang %s --subtract_exp'%(pfnum, pfnum, self.pixel_size, \
-                                               self.star_file)
+        command='relion_project --i pf%g/pf_masked.mrc --o '\
+        'pf%g/proto_particles --ctf --angpix %g --ang %s --subtract_exp'%\
+        (pfnum, pfnum, self.pixel_size, self.star_file)
         code=os.system(command)
         if code!=0:
             raise RuntimeError('RELION did not run properly. Try running the '
