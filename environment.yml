@@ -2,7 +2,6 @@ name: pf_refinement
 dependencies:
     - python=2.7
     - pip
-    - argparse
     - cycler
     - mpi4py
     - matplotlib
