@@ -13,7 +13,7 @@ if __name__ == "__main__":
     args=parser.parse_args()
     
     if args.cores>1:
-        b(args.star_file, cores=args.cores)
+        b=Sub(args.star_file, cores=args.cores)
         b.parallel()
     else:
         a=SubStar()
