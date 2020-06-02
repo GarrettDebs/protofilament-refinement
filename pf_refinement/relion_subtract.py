@@ -1,5 +1,4 @@
 from pf_refinement import InfoFile
-from mpi4py import MPI
 from gui import gdGui
 import numpy as np
 import os
@@ -36,6 +35,8 @@ class Sub(InfoFile):
                             '%s \n'%command)
         
     def parallel(self):
+        from mpi4py import MPI
+        
         pfs=np.arange(self.num_pfs)
         comm=MPI.COMM_WORLD
         rank=comm.Get_rank()

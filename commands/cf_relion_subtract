@@ -2,21 +2,18 @@
 
 from pf_refinement import Sub, SubStar, StarOp
 from argparse import ArgumentParser
-from mpi4py import MPI
 import numpy as np
 import os
 
 if __name__ == "__main__":
-    comm=MPI.COMM_WORLD
-    rank=comm.Get_rank()
-    size=comm.Get_size()
     
-    if size>1:
-        parser=ArgumentParser()
-        parser.add_argument('--star_file')
-        args=parser.parse_args()
-        
-        b=Sub(args.star_file, cores=size)
+    parser=ArgumentParser()
+    parser.add_argument('--star_file')
+    parser.add_argument('--cores', default=1, type=int)
+    args=parser.parse_args()
+    
+    if args.cores>1:
+        b(args.star_file, cores=args.cores)
         b.parallel()
     else:
         a=SubStar()
@@ -31,10 +28,10 @@ if __name__ == "__main__":
             try:
                 slurm=os.environ['SLURM_NODELIST']
                 command='mpirun -host %s -n %g cf_relion_subtract '\
-                '--star_file %s'%(slurm, cores, a.star_file)
+                '--star_file %s --cores %g'%(slurm, cores, a.star_file, cores)
             except Exception:
-                command='mpirun -n %g cf_relion_subtract --star_file %s'\
-                %(cores, a.star_file)
+                command='mpirun -n %g cf_relion_subtract --star_file %s '\
+                '--cores %g'%(cores, a.star_file, cores)
             os.system(command)
         else:
             b=Sub(a.star_file)
