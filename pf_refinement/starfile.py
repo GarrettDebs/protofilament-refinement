@@ -61,6 +61,11 @@ class StarFile(InfoFile):
         if data is None:
             data=self.df.to_numpy().tolist()
             
+        try:
+            data=data.to_numpy().tolist()
+        except Exception:
+            pass
+            
         n=open(output,'w')
         header=self.getHeader()
         n.write(''.join(header))

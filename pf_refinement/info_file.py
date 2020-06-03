@@ -10,8 +10,7 @@ class InfoFile(object):
         try:
             self.readInfo(file)
         except:
-            logging.warning('No info file, initialize the project.')
-            exit()
+            raise NameError('No info file, please initialize the project.')
             
     def readInfo(self, file):
         f=open(file)
