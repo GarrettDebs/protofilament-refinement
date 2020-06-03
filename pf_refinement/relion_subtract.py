@@ -97,7 +97,7 @@ class ProtoSub(InfoFile):
             self.finalSub(start_pf,True)
             
         if self.rank==0:
-            data=1
+            data=np.arange(2)
             for i in range(1, self.size):
                 req=self.comm.Isend(data, dest=i)
                 req.wait()
@@ -105,7 +105,7 @@ class ProtoSub(InfoFile):
             self.writeProtoStar()
                 
         else:
-            data=0
+            data=np.empty(2)
             req=self.comm.Irecv(data,source=0)
             req.wait()
 
