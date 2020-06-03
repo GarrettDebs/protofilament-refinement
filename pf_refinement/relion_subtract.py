@@ -131,21 +131,19 @@ class ProtoSub(InfoFile):
         '--o %s/pf%g_subbed --ctf ' \
         '--angpix %g --ang pf%g_for_sub.star --subtract_exp'%\
         (dirname, start, self.pixel_size, start)
-        #os.system(command)
+        os.system(command)
         for i in range(start+1, self.num_pfs):
             if i==self.num_pfs-1 and start_pf+1==self.num_pfs:
                 break
             self.subPf(i, dirname)
             if i>start+1 and i!=self.n1:
-                pass
-                #os.system('rm %s/pf%g_subbed.mrcs'%(dirname, i-1))
+                os.system('rm %s/pf%g_subbed.mrcs'%(dirname, i-1))
                 
         if start_pf!=self.num_pfs-1:
             for i in range(start_pf):
                 self.subPf(i, dirname)
                 if i>2 and i!=self.n1:
-                    pass
-                    #os.system('rm %s/pf%g_subbed.mrcs'%(dirname, i-1))
+                    os.system('rm %s/pf%g_subbed.mrcs'%(dirname, i-1))
 
             
     def subPf(self, pf_num, dirname, vol='protofilament_for_sub.mrc'):
@@ -166,7 +164,7 @@ class ProtoSub(InfoFile):
         command='relion_project --i %s --o %s/pf%g_subbed --ctf ' \
         '--angpix %g --ang %s/pf%g_for_sub.star --subtract_exp'\
         %(vol, dirname, pf_num, self.pixel_size, dirname, pf_num)
-        #os.system(command)
+        os.system(command)
     
     def finalSub(self,start_pf,clean=False):
         dirname='pf%g_protosubbed'%start_pf
@@ -190,8 +188,6 @@ class ProtoSub(InfoFile):
     def writeProtoStar(self):
         import pandas as pd
         dfs=[]
-        star=StarFile('pf0_protosubbed/pf0_finalsub.star')
-        star.readInfo('info.txt')
         
         num_pfs=self.num_pfs
         for i in range(num_pfs):
