@@ -188,6 +188,7 @@ class ProtoSub(InfoFile):
                       (dirname, dirname, self.n1))
             
     def writeProtoStar(self):
+        import pandas as pd
         dfs=[]
         star=StarFile('pf0_protosubbed/pf0_finalsub.star')
         star.readInfo('info.txt')
