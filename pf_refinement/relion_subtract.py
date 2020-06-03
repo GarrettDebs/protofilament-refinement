@@ -96,7 +96,7 @@ class ProtoSub(InfoFile):
             self.subProtoPfs(start_pf)
             self.finalSub(start_pf,True)
             
-        if rank==0:
+        if self.rank==0:
             data=1
             for i in range(1, self.size):
                 req=self.comm.Isend(data, dest=i)
