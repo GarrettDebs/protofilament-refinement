@@ -12,7 +12,7 @@ class InfoFile(object):
         except:
             raise NameError('No info file, please initialize the project.')
             
-    def readInfo(self, file):
+    def readInfo(self, file='info.txt'):
         f=open(file)
         lines=f.readlines()
         for line in lines:

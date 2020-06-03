@@ -95,6 +95,19 @@ class ProtoSub(InfoFile):
             self.neighbors(start_pf)
             self.subProtoPfs(start_pf)
             self.finalSub(start_pf,True)
+            
+        if rank==0:
+            data=1
+            for i in range(1, self.size):
+                req=self.comm.Isend(data, dest=i)
+                req.wait()
+            
+            self.writeProtoStar()
+                
+        else:
+            data=0
+            req=self.comm.Irecv(data,source=0)
+            req.wait()
 
 
     def neighbors(self,pf_num):
@@ -118,19 +131,19 @@ class ProtoSub(InfoFile):
         '--o %s/pf%g_subbed --ctf ' \
         '--angpix %g --ang pf%g_for_sub.star --subtract_exp'%\
         (dirname, start, self.pixel_size, start)
-        os.system(command)
+        #os.system(command)
         for i in range(start+1, self.num_pfs):
             if i==self.num_pfs-1 and start_pf+1==self.num_pfs:
                 break
             self.subPf(i, dirname)
             if i>start+1 and i!=self.n1:
-                os.system('rm %s/pf%g_subbed.mrcs'%(dirname, i-1))
+                #os.system('rm %s/pf%g_subbed.mrcs'%(dirname, i-1))
                 
         if start_pf!=self.num_pfs-1:
             for i in range(start_pf):
                 self.subPf(i, dirname)
                 if i>2 and i!=self.n1:
-                    os.system('rm %s/pf%g_subbed.mrcs'%(dirname, i-1))
+                    #os.system('rm %s/pf%g_subbed.mrcs'%(dirname, i-1))
 
             
     def subPf(self, pf_num, dirname, vol='protofilament_for_sub.mrc'):
@@ -151,7 +164,7 @@ class ProtoSub(InfoFile):
         command='relion_project --i %s --o %s/pf%g_subbed --ctf ' \
         '--angpix %g --ang %s/pf%g_for_sub.star --subtract_exp'\
         %(vol, dirname, pf_num, self.pixel_size, dirname, pf_num)
-        os.system(command)
+        #os.system(command)
     
     def finalSub(self,start_pf,clean=False):
         dirname='pf%g_protosubbed'%start_pf
@@ -171,5 +184,20 @@ class ProtoSub(InfoFile):
             os.system('rm %s/*subbed.mrcs'%(dirname))
             os.system('mv %s/safe %s/pf%g_subbed.mrcs'%\
                       (dirname, dirname, self.n1))
+            
+    def writeProtoStar(self):
+        dfs=[]
+        star=StarFile('pf0_protosubbed/pf0_finalsub.star')
+        star.readInfo('info.txt')
+        
+        num_pfs=self.num_pfs
+        for i in range(num_pfs):
+            star=StarFile('pf%g_protosubbed/pf%g_finalsub.star'%(i,i))
+            index=pd.Index(range(i, len(star.df)*num_pfs, num_pfs))
+            dfs.append(star.df.set_index(index))
+        
+        
+        df=pd.concat(dfs).sort_index()
+        star.writeStar('protosubbed.star',df)
     
         
