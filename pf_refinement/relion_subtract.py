@@ -137,12 +137,14 @@ class ProtoSub(InfoFile):
                 break
             self.subPf(i, dirname)
             if i>start+1 and i!=self.n1:
+                pass
                 #os.system('rm %s/pf%g_subbed.mrcs'%(dirname, i-1))
                 
         if start_pf!=self.num_pfs-1:
             for i in range(start_pf):
                 self.subPf(i, dirname)
                 if i>2 and i!=self.n1:
+                    pass
                     #os.system('rm %s/pf%g_subbed.mrcs'%(dirname, i-1))
 
             
