@@ -1,5 +1,4 @@
 import gui.base as bs
-import logging
 import os
 
 
@@ -70,8 +69,7 @@ class NewInfo():
         for key, item in self.vals.items():
             ###Make sure there are no missing items
             if not item:
-                logging.error('Missing input parameter, rerun initialization')
-                exit()
+                raise NameError('Missing input parameter, rerun initialization')
                 
             f.write(' '.join([key, item+ '\n']))
             

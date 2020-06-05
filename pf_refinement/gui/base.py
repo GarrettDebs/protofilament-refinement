@@ -1,9 +1,5 @@
 import Tkinter as tk
 import tkFileDialog
-import logging
-#from Tkinter.tkk import Notebook
-
-logging.basicConfig(level=logging.DEBUG)
 
 class gdGui():
     def __init__(self, title, **kwargs):
@@ -100,7 +96,6 @@ class gdGui():
         
         total_vars=num_bools+num_entry
         
-        logging.info('For now only dealing with two columns')
         self.i=0
         
         for key in self.file_var:

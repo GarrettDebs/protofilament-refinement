@@ -103,6 +103,7 @@ class ProtoSub(InfoFile):
                 req.wait()
             
             self.writeProtoStar()
+            os.system('rm pf*_for_sub.star')
                 
         else:
             data=np.empty(2)

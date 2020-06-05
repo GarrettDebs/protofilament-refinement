@@ -14,6 +14,7 @@ setuptools.setup(
         "commands/cf_init_project",
         "commands/cf_patch_masks",
         "commands/cf_relion_subtract",
-        "commands/cf_protofilament_subtract"
+        "commands/cf_protofilament_subtract",
+        "commands/cf_focused_classification"
         ]
 )
