@@ -2,4 +2,5 @@
 from pf_refinement import NewInfo
 
 if __name__ == "__main__":
-    NewInfo()
+    a=NewInfo()
+    a()

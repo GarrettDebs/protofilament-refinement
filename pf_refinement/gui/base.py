@@ -1,3 +1,5 @@
+from pkg_resources import resource_stream
+from PIL import ImageTk, Image
 import Tkinter as tk
 import tkFileDialog
 
@@ -11,6 +13,7 @@ class gdGui():
         self.addVars(**kwargs)
         
         ##Determine layout
+        self.addImage()
         self.packVars()
         
         ##Add button to return parameters
@@ -90,6 +93,12 @@ class gdGui():
                                         command=lambda var=key: self.addAllFile(var))
         
                     
+    def addImage(self):
+        imname=resource_stream('pf_refinement','data/mt50.jpg')
+        self.img=ImageTk.PhotoImage(Image.open(imname))
+        self.imlabel=tk.Label(self.top, image=self.img)
+        self.imlabel.grid(row=0, column=0, columnspan=1, rowspan=30, padx=5)
+        
     def packVars(self):
         num_bools=len(self.bool_vars)
         num_entry=len(self.entry_vars)
@@ -99,23 +108,23 @@ class gdGui():
         self.i=0
         
         for key in self.file_var:
-            self.file_var[key].grid(row=self.i, column=0)
-            self.file_button[key].grid(row=self.i, column=1)
+            self.file_var[key].grid(row=self.i, column=1)
+            self.file_button[key].grid(row=self.i, column=2)
             self.i+=1             
         
         for key in self.bool_vars:
-            self.bool_label[key].grid(row=self.i, column=0)
-            self.bool_box[key].grid(row=self.i, column=1)
+            self.bool_label[key].grid(row=self.i, column=1)
+            self.bool_box[key].grid(row=self.i, column=2)
             self.i+=1
             
         for key in self.entry_vars:
-            self.entry_label[key].grid(row=self.i, column=0, padx=5, pady=5)
-            self.entry_vars[key].grid(row=self.i, column=1, padx=5, pady=5)
+            self.entry_label[key].grid(row=self.i, column=1, padx=5, pady=5)
+            self.entry_vars[key].grid(row=self.i, column=2, padx=5, pady=5)
             self.i+=1
             
     def addButton(self):
-        button=tk.Button(self.top, text='Run', command=self.returnValues).grid(row=self.i, \
-                                                                column=1)
+        button=tk.Button(self.top, text='Run', command=self.returnValues)
+        button.grid(row=self.i, column=2)
         
     def returnValues(self):
         self.vals={}

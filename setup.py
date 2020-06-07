@@ -16,5 +16,6 @@ setuptools.setup(
         "commands/cf_relion_subtract",
         "commands/cf_protofilament_subtract",
         "commands/cf_focused_classification"
-        ]
+        ],
+    package_data={'pf_refinement': ['data/mt50.jpg']}
 )

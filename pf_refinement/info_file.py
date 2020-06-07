@@ -39,7 +39,7 @@ class InfoFile(object):
         
         
 class NewInfo():
-    def __init__(self):
+    def __call__(self):
         ###Start by getting the values to be written out
         self.getValues()
         ###Write out the info file
