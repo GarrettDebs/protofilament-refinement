@@ -2,7 +2,6 @@ from pf_refinement import InfoFile, StarFile
 from gui import gdGui
 import numpy as np
 import os
-from distutils.log import info
 
 class SubStar(InfoFile):
     def __init__(self, info='info.txt'):
@@ -12,7 +11,7 @@ class SubStar(InfoFile):
         if protosub:
             vals={
                 'input_star': 'XXXSTARFILEXXX',
-                'input_volume': 'XXXMRCFILEXXX',
+                'protofilament_volume': 'XXXMRCFILEXXX',
                 'protofilament_mask': 'XXXMRCFILE',
                 'cores': 1
                 }
@@ -30,7 +29,7 @@ class SubStar(InfoFile):
         self.cores=int(self.vals['cores'])
         if protosub:
             self.makeProto()
-            self.volume=self.vals['input_volume']
+            self.volume=self.vals['protofilament_volume']
             self.mask=self.vals['protofilament_mask']
             self.splitPfs()
             

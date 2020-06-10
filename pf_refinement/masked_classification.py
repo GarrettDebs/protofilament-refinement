@@ -1,15 +1,18 @@
-from pf_refinement import InfoFile, StarFile, EMImage
+from pf_refinement import StarOp, EMImage
 from gui import gdGui
+import pandas as pd
 import os
 
-class MaskedClassification(InfoFile):
+class MaskedClassification(StarOp):
     def __init__(self):
-        super(MaskedClassification, self).__init__()
+        self.readInfo()
         
     def __call__(self):
         self.getVals()
         self.makeMask()
         self.relionSubtract()
+        self.readStar(self.vals['input_star'])
+        self.truncStar(30000, 'roi_for_init_classification_30k.star')
         
     def getVals(self):
         vals={
@@ -42,3 +45,5 @@ class MaskedClassification(InfoFile):
             raise RuntimeError('RELION did not run properly. Try running the '
                             'following command to troubleshoot \n\n'
                             '%s \n'%command)
+            
+

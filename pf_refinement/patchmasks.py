@@ -31,17 +31,17 @@ class WedgeMasks(InfoFile):
         #parser.add_argument('-f','--frealign_input_file',default='info.txt')
         
     def startingValues(self):
-        vals={'input_volume':'XXXMRCFILEXXX', 'mask':'XXXMRCFILEXXX', \
-              'pdb': 'XXXFILEXXX'}#, 'output_volume':'XXXMRCFILEXXX'}
+        vals={'microtubule_volume':'XXXMRCFILEXXX', 'microtubule_mask':'XXXMRCFILEXXX', \
+              'fit_tubulin_pdb': 'XXXFILEXXX'}#, 'output_volume':'XXXMRCFILEXXX'}
         return vals
     
     def readFiles(self):
         self.pdb=pdb_util.PDB()
-        self.pdb.read_file(self.vals['pdb'])
+        self.pdb.read_file(self.vals['fit_tubulin_pdb'])
         self.com=self.pdb.calc_center()
-        self.vol=EMImage(self.vals['input_volume'])
+        self.vol=EMImage(self.vals['microtubule_volume'])
         self.vol_dim=np.asarray(self.vol.data.shape)
-        mask=EMImage(self.vals['mask'])
+        mask=EMImage(self.vals['microtubule_mask'])
         self.vol.mult(mask)
         
     def initCoords(self):

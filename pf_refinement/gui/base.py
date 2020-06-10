@@ -2,6 +2,7 @@ from pkg_resources import resource_stream
 from PIL import ImageTk, Image
 import Tkinter as tk
 import tkFileDialog
+import os
 
 class gdGui():
     def __init__(self, title, **kwargs):
@@ -52,28 +53,39 @@ class gdGui():
                 self.entry_vars[key]=tk.Entry(self.top)
                 self.entry_vars[key].insert(0, item)
     
+    def prettyFile(self):
+        try:
+            self.cwd
+        except Exception:
+            self.cwd=os.getcwd()
+            
+        return os.path.relpath(self.top.filename, self.cwd)
+    
     def addMrcFile(self, key):            
         self.top.filename = tkFileDialog.askopenfilename\
             (initialdir = ".",title = "Select file",filetypes = \
              (("MRC files","*.mrc"),("all files","*.*")))
         
+        filename=self.prettyFile()
         self.file_var[key].delete(0,'end')
-        self.file_var[key].insert(0, self.top.filename)
+        self.file_var[key].insert(0, filename)
     
     def addStarFile(self, key):            
         self.top.filename = tkFileDialog.askopenfilename\
             (initialdir = ".",title = "Select file",filetypes = \
             (("star files","*.star"),("all files","*.*")))
             
+        filename=self.prettyFile()
         self.file_var[key].delete(0,'end')
-        self.file_var[key].insert(0, self.top.filename)
+        self.file_var[key].insert(0, filename)
         
     def addAllFile(self, key):            
         self.top.filename = tkFileDialog.askopenfilename\
             (initialdir = ".",title = "Select file")
             
+        filename=self.prettyFile()
         self.file_var[key].delete(0,'end')
-        self.file_var[key].insert(0, self.top.filename)
+        self.file_var[key].insert(0, filename)
         
     def addFile(self, key, item):
         self.file_var[key]=tk.Entry(self.top)

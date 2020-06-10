@@ -11,11 +11,12 @@ setuptools.setup(
     description="A cryo-EM reconstruction technique to more precisely refine microtubule structures",
     packages=setuptools.find_packages(),
     scripts=[
-        "commands/cf_init_project",
-        "commands/cf_patch_masks",
-        "commands/cf_relion_subtract",
-        "commands/cf_protofilament_subtract",
-        "commands/cf_focused_classification"
+        "commands/pf_init_project",
+        "commands/pf_wedge_masks",
+        "commands/pf_microtubule_subtract",
+        "commands/pf_protofilament_subtract",
+        "commands/pf_focused_classification",
+        "commands/pf_preprocess"
         ],
     package_data={'pf_refinement': ['data/mt50.jpg']}
 )

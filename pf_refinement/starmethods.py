@@ -32,6 +32,12 @@ class StarOp(StarFile):
                 temp[:,i]=dphi[i::self.num_pfs]
                 
             self.dphixs[key]=temp
+            
+        temp=[]
+        blah=[temp.extend(self.dphixs[key].flatten().tolist()) 
+              for key in self.dphixs.keys()]
+
+        self.dphi_flat=np.array(temp)
         
     def symStar(self):
         try:
@@ -75,4 +81,22 @@ class StarOp(StarFile):
         
         self.df=self.df.assign(ImageName=newnames)
         self.writeStar('proto_particle_stack.star')
+        
+    def truncStar(self, size, output):
+        try:
+            self.mt.keys[0]
+        except Exception:
+            self.mtGroup()
+        
+        i=1
+        keys=self.mt.groups.keys()
+        
+        newdf=self.mt.get_group(keys[0])
+        
+        while len(newdf)<size and i<len(keys):
+            newdf=pd.concat([newdf, self.mt.get_group(keys[i])])
+            i+=1
+        
+        newdf=newdf.sort_index()
+        self.writeStar(output, newdf)
             

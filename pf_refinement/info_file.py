@@ -16,8 +16,8 @@ class InfoFile(object):
         lines=f.readlines()
         for line in lines:
             temp=line.split()
-            if temp[0].startswith('micro'):
-                self.micrograph_pixel_size=float(temp[1])
+            if temp[0].startswith('pix'):
+                self.pixel_size=float(temp[1])
             elif temp[0].startswith('sym'):
                 self.num_pfs=int(temp[1])
             elif temp[0].startswith('num'):
@@ -29,12 +29,8 @@ class InfoFile(object):
         
         f.close()
         
-        self.pixel_size=self.micrograph_pixel_size
-        
         self.rise_per_subunit=(self.dimer_repeat_dist*self.num_starts)/self.num_pfs
         self.twist_per_subunit=(360-self.helical_twist)/self.num_pfs
-        print 'micrograph_pixel_size: %g num_pfs: %d dimer_repeat: %g twist: %g'\
-        %(self.micrograph_pixel_size, self.num_pfs, self.dimer_repeat_dist, self.helical_twist)
         
         
         
@@ -56,7 +52,7 @@ class NewInfo():
     def startingValues(self):
         ###Default starting values      
         vals={}
-        vals['micrograph_pixel_size']=1.3
+        vals['pixel_size']=1.3
         vals['symmetry_type']=13
         vals['num_starts']=1.5
         vals['dimer_repeat_distance']=82
