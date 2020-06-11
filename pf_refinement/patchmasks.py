@@ -90,8 +90,6 @@ class WedgeMasks(InfoFile):
                 
             wedge[i,:,:][inds]=1
             
-        print above, below
-        print np.rad2deg(above), np.rad2deg(below)
         return wedge
     
     def cosmask_filter(self):

@@ -23,10 +23,10 @@ if __name__ == "__main__":
             cores=min(a.cores, a.num_pfs)
             try:
                 slurm=os.environ['SLURM_NODELIST']
-                command='mpirun -host %s -n %g cf_protofilament_subtract '\
+                command='mpirun -host %s -n %g pf_protofilament_subtract '\
                 '--star_file %s --cores %g'%(slurm, cores, a.star_file, cores)
             except Exception:
-                command='mpirun -n %g cf_protofilament_subtract --star_file %s '\
+                command='mpirun -n %g pf_protofilament_subtract --star_file %s '\
                 '--cores %g'%(cores, a.star_file, cores)
             os.system(command)
         else:
