@@ -21,18 +21,15 @@ class Preprocess(StarFile):
         
     def startingValues(self):
         ###Default starting values      
-        vals=OrderedDict({
+        vals={
             'pixel_size': 1,
             'symmetry_type': 13,
             'num_starts': 1.5,
             'dimer_repeat_distance': 82,
             'helical_twist': 0,
             'preprocess': False,
-            'input_star_file': 'XXXSTARFILEXXX',
-            'output_star_file': 'OUTPUT.star',
-            'invert_polarity': False,
-            'remove_symmetry': False
-            })
+            }
+            
         return vals
     
     def writeInfo(self):
@@ -50,6 +47,16 @@ class Preprocess(StarFile):
         f.close()
     
     def preprocess(self):
+        vals={
+        'input_star_file': 'XXXSTARFILEXXX',
+            'output_star_file': 'OUTPUT.star',
+            'invert_polarity': False,
+            'remove_symmetry': False
+            }
+        temp=gdGui('Initialize Project', **vals)
+        ###Retrieve the values that have been input from the user
+        self.vals=temp.sendValues()
+        
         self.readStar(self.vals['input_star_file'])
         if self.vals['remove_symmetry']:
             self.df=self.df.iloc[::self.num_pfs]
