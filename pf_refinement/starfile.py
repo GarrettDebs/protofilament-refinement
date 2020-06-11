@@ -3,8 +3,12 @@ import pandas as pd
 import numpy as np
 
 class StarFile(InfoFile):
-    def __init__(self, file):
-        self.readStar(file)
+    def __init__(self, file=None):
+        try:
+            self.readStar(file)
+        except Exception:
+            pass
+        
         self.name=file
         
     def readStar(self, file):

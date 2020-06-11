@@ -31,45 +31,6 @@ class InfoFile(object):
         
         self.rise_per_subunit=(self.dimer_repeat_dist*self.num_starts)/self.num_pfs
         self.twist_per_subunit=(360-self.helical_twist)/self.num_pfs
-        
-        
-        
-class NewInfo():
-    def __call__(self):
-        ###Start by getting the values to be written out
-        self.getValues()
-        ###Write out the info file
-        self.writeInfo()
-        
-    def getValues(self):
-        ###Initialize the starting parameters with the defaults
-        vals=self.startingValues()
-        ###Call the GUI to get user input values
-        temp=bs.gdGui('Initialize Project', **vals)
-        ###Retrieve the values that have been input from the user
-        self.vals=temp.sendValues()
-        
-    def startingValues(self):
-        ###Default starting values      
-        vals={}
-        vals['pixel_size']=1.3
-        vals['symmetry_type']=13
-        vals['num_starts']=1.5
-        vals['dimer_repeat_distance']=82
-        vals['helical_twist']=0
-        return vals
-    
-    def writeInfo(self):
-        f=open('info.txt','w')
-        ###Iterate through the variables and write them out
-        for key, item in self.vals.items():
-            ###Make sure there are no missing items
-            if not item:
-                raise NameError('Missing input parameter, rerun initialization')
-                
-            f.write(' '.join([key, item+ '\n']))
-            
-        f.close()
                 
         
         
