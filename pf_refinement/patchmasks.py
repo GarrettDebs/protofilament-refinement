@@ -71,8 +71,7 @@ class WedgeMasks(InfoFile):
         wedge=np.zeros(self.vol_dim.tolist())
         
         ###Define the size of the wedgemask
-        #fudge=np.deg2rad(360.0/(self.num_pfs*2))
-        fudge=np.deg2rad(16)
+        fudge=np.deg2rad(360.0/(self.num_pfs*2)+2)
         
         ###Generate the wedge mask
         for i in range(len(theta)):
