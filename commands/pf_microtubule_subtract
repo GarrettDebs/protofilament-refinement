@@ -19,9 +19,12 @@ if __name__ == "__main__":
         a=SubStar()
         a()
         
-        ###Generate the symmeterized starfile
+        ###Generate the symmeterized star file
         sym=StarOp(a.star_file)
         sym.symStar()
+        
+        ### Delete the star file variable to free some memory
+        del sym
         
         if a.cores>1:
             cores=min(a.cores, a.num_pfs)

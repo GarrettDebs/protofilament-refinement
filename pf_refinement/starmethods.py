@@ -52,6 +52,7 @@ class StarOp(StarFile):
         
         rise=np.tile(use[:,2]/self.pixel_size,num_particles)
         pfnums=np.tile(np.arange(self.num_pfs),num_particles)
+        shifted_rot=np.tile(use[:,0]*-self.helical_twist, num_particles)
 
         temp=self.df.iloc[np.repeat(np.arange(num_particles),self.num_pfs)].copy()
         temp.reset_index(inplace=True)
@@ -66,10 +67,11 @@ class StarOp(StarFile):
         temp.OriginY=(temp.OriginY.values.astype(float) - 
                                   rise*np.sin(theta)*np.sin(psi)).astype(str)
         temp.AngleRot=(temp.AngleRot.values.astype(float) +
-                                   pfnums*self.twist_per_subunit).astype(str)
+                                   pfnums*self.twist_per_subunit +
+                                   shifted_rot).astype(str)
                                    
         self.df=temp
-        self.writeStar(self.name.split('.')[0]+'_sub.star')
+        self.writeStar('sym_coords.star')
         
         self.df.rename(columns={'ImageName': 'ImageOriginalName'}, inplace=True)
         

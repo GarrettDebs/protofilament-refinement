@@ -24,15 +24,13 @@ class WedgeMasks(InfoFile):
         vals=self.startingValues()
         temp=gdGui('Generate Wedge Masks', **vals)
         self.vals=temp.sendValues()
-        #self.vals={'input_volume':'test.mrc', 'mask':'test_mask.mrc', 'pdb': 'fit.pdb'}
-        #parser.add_argument('-w','--patch_width',default=3,type=int)
-        #parser.add_argument('-l','--patch_length',default=3,type=int)
-        #parser.add_argument('-s','--shift',action='store_true')
-        #parser.add_argument('-f','--frealign_input_file',default='info.txt')
         
     def startingValues(self):
-        vals={'microtubule_volume':'XXXMRCFILEXXX', 'microtubule_mask':'XXXMRCFILEXXX', \
-              'fit_tubulin_pdb': 'XXXFILEXXX'}#, 'output_volume':'XXXMRCFILEXXX'}
+        vals={
+            'microtubule_volume':'XXXMRCFILEXXX', 
+            'microtubule_mask':'XXXMRCFILEXXX', 
+            'fit_tubulin_pdb': 'XXXFILEXXX'
+            }
         return vals
     
     def readFiles(self):
@@ -55,23 +53,22 @@ class WedgeMasks(InfoFile):
         
     def createWedge(self, subunit_num=0):
         ###Initialize the location of the protofilament to remove
-        theta0=np.arctan2(self.com[0], self.com[1])-\
+        theta0=np.arctan2(self.com[0], self.com[1])+\
         np.deg2rad(subunit_num*self.twist_per_subunit)
             
         z0=(self.com[2]+self.rise_per_subunit*subunit_num)/self.pixel_size
         
         ###Define the length along the protofilament in terms of subunits 
-        zsubunits=(self.zline-z0)/(self.rise_per_subunit*self.num_pfs/\
-                                   (self.num_starts*self.pixel_size))
+        zsubunits=(self.zline.copy()-z0)*self.pixel_size/self.dimer_repeat_dist
         
         ###Define the angle of the center of the protofilament along the length of the segment
-        theta=np.deg2rad((self.twist_per_subunit*self.num_pfs-360)*zsubunits)-theta0
+        theta=np.deg2rad((-self.helical_twist)*zsubunits)+theta0
         
         ###Initialize the wedge mask
         wedge=np.zeros(self.vol_dim.tolist())
         
         ###Define the size of the wedgemask
-        fudge=np.deg2rad(360.0/(self.num_pfs*2)+2)
+        fudge=np.deg2rad(360.0/(self.num_pfs*2))
         
         ###Generate the wedge mask
         for i in range(len(theta)):
