@@ -36,7 +36,7 @@ class SubStar(InfoFile):
     def makeProto(self):
         from pf_refinement import EMImage
         
-        proto=EMImage(self.vals['input_volume'])
+        proto=EMImage(self.vals['protofilament_volume'])
         mask=EMImage(self.vals['protofilament_mask'])
         
         proto.mult(mask)
