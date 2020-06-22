@@ -1,9 +1,12 @@
 ###Make sure the python path is clear
 import os
 
-if os.environ['PYTHONPATH']:
+try: 
+    os.environ['PYTHONPATH']
     os.system('remove_pythonpath.sh')
     exit()
+except Exception:
+    pass
 
 
 from info_file import *
