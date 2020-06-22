@@ -17,7 +17,8 @@ setuptools.setup(
         "commands/pf_protofilament_subtract",
         "commands/pf_focused_classification",
         "commands/pf_preprocess",
-        "commands/pf_plot_distortions"
+        "commands/pf_plot_distortions",
+        "commands/remove_pythonpath.sh"
         ],
     package_data={'pf_refinement': ['data/mt50.jpg']}
 )
