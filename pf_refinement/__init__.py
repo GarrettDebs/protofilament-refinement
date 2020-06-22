@@ -2,7 +2,7 @@
 import os
 
 try:
-    os.unsetenv('PYTHONPATH')
+    del os.environ['PYTHONPATH']
 except Exception:
     pass
 
