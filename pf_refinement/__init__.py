@@ -3,7 +3,9 @@ import os
 
 try: 
     os.environ['PYTHONPATH']
-    os.system('remove_pythonpath.sh')
+    print 'PYTHONPATH is set which can lead to some issues. Please run the '\
+    'following command and try again.\n'
+    print 'unset PYTHONPATH'
     exit()
 except Exception:
     pass
