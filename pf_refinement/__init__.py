@@ -1,3 +1,12 @@
+###Make sure the python path is clear
+import os
+
+try:
+    os.unsetenv('PYTHONPATH')
+except Exception:
+    pass
+
+
 from info_file import *
 from starfile import *
 
