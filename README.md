@@ -9,7 +9,7 @@ Currently, this program assumes that you have already refined your microtubule s
 The recommended mode of installation is to install the program within a conda environment.
 
 ```bash
-git clone XXXX
+git clone https://gitlab.com/gedebs371/protofilament-refinement.git
 cd protofilament-refinement
 conda env create -f environment.yml
 conda activate pf_refinement
@@ -18,4 +18,4 @@ python setup.py install
 
 ## Tutorial
 
-See attached sdfjkdlsf
+See Tutorial.pdf in the project directory.
