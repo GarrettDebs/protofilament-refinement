@@ -143,6 +143,9 @@ class gdGui():
         
         for key in self.file_var:
             self.vals[key]=self.file_var[key].get()
+            if not os.path.isfile(self.vals[key]):
+                message='Could not find %s'%self.vals[key]
+                raise OSError(message)
         
         for key in self.bool_vars:
             self.vals[key]=self.bool_vars[key].get()=='True'
