@@ -1,3 +1,11 @@
+###For Mac users
+from sys import platform as sys_pf
+
+if sys_pf == 'darwin':
+    print('MacOS detected.')
+    import matplotlib
+    matplotlib.use("TkAgg")
+
 from scipy.optimize import least_squares
 from pf_refinement import StarOp
 import matplotlib.pyplot as plt
@@ -23,7 +31,8 @@ class PlotDeltaPhi(StarOp):
             
         def initVals(self):
             vals={
-                'input_star': 'XXXSTARFILEXXX'
+                'input_star': 'XXXSTARFILEXXX',
+                'plot_indiv_mt': False
                 }
             return vals
             
@@ -44,6 +53,8 @@ class PlotDeltaPhi(StarOp):
             self.plotAll()
             self.plotSeam()
             self.plotNonseam()
+            if self.vals['plot_indiv_mt']:
+                self.plotIndiv()
 
         def plotStuff(self, data, output_root):
             plt.figure(figsize=self.im_size)
@@ -114,10 +125,6 @@ class PlotDeltaPhi(StarOp):
                 res=c1*np.exp(-(x-mu1)**2.0/(2.0*sigma1**2.0))
                 return res
             
-            #x=np.linspace(self.xlim[0], self.xlim[-1], 500)
-            #kde=stats.gaussian_kde(data)
-            #y=kde.evaluate(x)
-            
             bounds=([-100, -100, -100, -100, -100, -100], 
                     [100, 100, 100, 100, 100, 100])
             fit=least_squares(double_gaussian_fit,
@@ -131,13 +138,6 @@ class PlotDeltaPhi(StarOp):
             y_fit=double_gaussian(x, fit['x'])
             y1_fit=gaussian(x, fit['x'][:-3])
             y2_fit=gaussian(x, fit['x'][3:])
-            
-            #ys=np.array([y_fit, y1_fit, y2_fit]).transpose()
-            #plt.plot(x, ys)
-            
-            #title=r'Peak1=$%0.1f\degree$, Peak2=$%0.1f\degree$'\
-            #%(mu1, mu2)
-            #plt.title(title)
             
             return y_fit, y1_fit, y2_fit, mu1, mu2
             
@@ -162,10 +162,6 @@ class PlotDeltaPhi(StarOp):
             
             return y_fit, mu1
 
-            #plt.plot(x, y_fit)
-            
-            #title=r'Peak1=$%0.1f\degree$'%(mu1)
-            #plt.title(title) 
 
         def plotAll(self):
             if not os.path.isdir(self.dirname):
@@ -185,4 +181,42 @@ class PlotDeltaPhi(StarOp):
             output_root=self.dirname+'/nonseam_dphis'
             self.plotStuff(data, output_root)
             
+        def plotIndiv(self):
+            dirname='indiv_mt_plots'
+            if not os.path.isdir(dirname):
+                os.mkdir(dirname)
+            
+            start=5
+            line=np.ones(self.num_pfs)*start
+            spacing=start*2
+            y=range(self.num_pfs)
+            dphie=360.0/self.num_pfs
+            
+            ylim=[y[0], y[-1]]
+            
+            
+                
+            for key in self.dphixs.keys():
+                plt.figure(figsize=(8,5))
+                plt.ylim(ylim)
+                name=key[0].split('/')[-1].split('.')[0]+'_'+key[-1]
+                filename=dirname+'/'+name+'.jpg'
+                
+                data=self.dphixs[key]-dphie+start
+                
+                xlim=[data[0].min()-1, (data[-1]+1+(len(data)-1)*spacing).max()]
+                plt.xlim(xlim)
+                
+                plt.xlabel(r'$\Delta\Phi (\degree)$')
+                plt.ylabel('Protofilament #')
+                
+                for i in range(len(data)):
+                        x_data=data[i,:]+spacing*i
+                        x_ref=line+spacing*i
+                        plt.plot(x_data, y, '-k')
+                        plt.plot(x_ref, y, '--b')
+                        
+                
+                plt.savefig(filename)
+                plt.close()
             
