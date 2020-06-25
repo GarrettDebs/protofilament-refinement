@@ -1,21 +1,25 @@
 from gui import gdGui
-from collections import OrderedDict
 from pf_refinement import StarFile
 
 class Preprocess(StarFile):
     def __call__(self):
-        ###Start by getting the values to be written out
+        ### Start by getting the values to be written out
         self.getValues()
-        ###Write out the info file
+        
+        ### Write out the info file
         self.writeInfo()
+        
+        ### If there is any preprocessing that needs to be done, call it.
         if self.vals['preprocess']:
             self.preprocess()
         
     def getValues(self):
         ###Initialize the starting parameters with the defaults
         vals=self.startingValues()
+        
         ###Call the GUI to get user input values
         temp=gdGui('Initialize Project', **vals)
+        
         ###Retrieve the values that have been input from the user
         self.vals=temp.sendValues()
         
@@ -47,6 +51,8 @@ class Preprocess(StarFile):
         f.close()
     
     def preprocess(self):
+        ### Bit of a shortcut lumping everything here, but initializing the 
+        ### preprocessing variables
         vals={
         'input_star_file': 'XXXSTARFILEXXX',
             'output_star_file': 'OUTPUT.star',
@@ -54,14 +60,19 @@ class Preprocess(StarFile):
             'remove_symmetry': False
             }
         temp=gdGui('Initialize Project', **vals)
+        
         ###Retrieve the values that have been input from the user
         self.vals=temp.sendValues()
         
         self.readStar(self.vals['input_star_file'])
+        
+        ### Read every N line to remove N-fold symmetry from star file
         if self.vals['remove_symmetry']:
             self.df=self.df.iloc[::self.num_pfs]
             
+        ### Add 180 degrees to invert the polarity
         if self.vals['invert_polarity']:
             self.df.AnglePsi=(self.df.AnglePsi.astype(float)+180).astype(str)
         
+        ### Save the output star file
         self.writeStar(self.vals['output_star_file'])
