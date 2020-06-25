@@ -54,7 +54,7 @@ class Sub(InfoFile):
         super(Sub, self).__init__(info)
         self.star_file = star_file
         
-    def __call__(self, pfnum, rank=0):
+    def __call__(self, pfnum):
         command='relion_project --i pf%g/pf_masked.mrc --o '\
         'pf%g/proto_particles --ctf --angpix %g --ang %s --subtract_exp'%\
         (pfnum, pfnum, self.pixel_size, self.star_file)
@@ -74,7 +74,7 @@ class Sub(InfoFile):
         nums=pfs[pfs%size==rank]
         
         for i in nums:
-            self(i, rank=rank)
+            self(i)
             
 class ProtoSub(InfoFile):
     def __init__(self, info='info.txt'):

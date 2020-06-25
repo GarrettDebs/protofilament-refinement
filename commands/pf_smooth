@@ -1,0 +1,54 @@
+#!/usr/bin/env python
+
+from pf_refinement.smooth_coordinates import SmoothGui, SmoothCoords
+from argparse import ArgumentParser
+import numpy as np
+import os
+
+if __name__ == "__main__":
+    
+    ### Setup the input variables
+    parser=ArgumentParser()
+    parser.add_argument('--star_file')
+    parser.add_argument('--micrograph_pixel_size')
+    parser.add_argument('--subunits_per_repeat')
+    parser.add_argument('--fit_order')
+    parser.add_argument('--keep_filament_id')
+    parser.add_argument('--only_interpolate')
+    parser.add_argument('--workdir')
+    parser.add_argument('--cores', default=1, type=int)
+    args=parser.parse_args()
+    
+    ### Will only enter this logic if user inputs multiple cores into GUI
+    if args.cores>1:
+        ### Pass the inputs from the gui to the command
+        b=SmoothCoords(**vars(args))
+        b()
+    else:
+        ### Gets user input from the gui
+        a=SmoothGui()
+        a()
+
+        ### Checks if we're running in parallel
+        if a.cores>1:
+            ### Base command
+            command='pf_smooth '
+            
+            ### Iterate through the variables so we don't have to manually add
+            ### each one
+            for key, item in a.vals.iteritems():
+                command+='--%s %s '%(key, str(item))
+            
+            ### Special thing we have to do for slurm job schedulers
+            try:
+                slurm=os.environ['SLURM_NODELIST']
+                command='mpirun -host %s -n %g '%(slurm, a.cores) + command
+            except Exception:
+                command='mpirun -n %g '%a.cores + command
+            os.system(command)
+            
+        else:
+            ### Assuming we're not running anything in parallel, pass the
+            ### user inputs to the command
+            b=SmoothCoords(**a.vals)
+            b()
