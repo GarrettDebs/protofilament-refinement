@@ -11,7 +11,6 @@ import pdb_util
 from EMImage import EMImage
 from util3d import spherical_cosmask
 from tqdm import tqdm
-from scipy.ndimage.interpolation import affine_transform
 
 
 class WedgeMasks(InfoFile):
@@ -72,9 +71,11 @@ class WedgeMasks(InfoFile):
         
         ###Generate the wedge mask
         for i in range(len(theta)):
+            ### Find the range of angles for the  wedge mask to fall between
             temp1=np.remainder(theta[i]-fudge+2*np.pi,2*np.pi)-2*np.pi
             temp2=np.remainder(theta[i]+fudge+2*np.pi,2*np.pi)-2*np.pi
             angles=[temp1, temp2]
+            ### Account for the 360 degree wrapping
             if max(angles)-min(angles)>2*fudge+.2:
                 above=max(angles)
                 below=min(angles)
@@ -89,31 +90,12 @@ class WedgeMasks(InfoFile):
         return wedge
     
     def cosmask_filter(self):
+        ### Add soft edge to the mask
         edge_resolution=20
         edge_width = self.pixel_size * np.ceil(edge_resolution/(2*self.pixel_size))
         cosmask_filter = np.fft.fftshift(spherical_cosmask(self.vol_dim, 0, edge_width / self.pixel_size))
         self.cosmask_filter = np.fft.fftn(cosmask_filter) / np.sum(cosmask_filter)
     
-    def rotshift3D_spline(self, v, eulers, shifts=np.array([0,0,0]), mode='wrap'):
-    # With a nod to:
-    #  http://stackoverflow.com/questions/20161175/how-can-i-use-scipy-ndimage-interpolation-affine-transform-to-rotate-an-image-ab
-        print shifts
-        print eulers
-        rot_origin = 0.5*np.array(v.shape)
-        rot_rad = -np.deg2rad(eulers)
-        phi = np.array([[np.cos(rot_rad[0]), np.sin(rot_rad[0]), 0],
-                               [-np.sin(rot_rad[0]),np.cos(rot_rad[0]), 0],
-                               [0                , 0              , 1]])
-        theta=np.array([[np.cos(rot_rad[1]), 0,-np.sin(rot_rad[1])],[0,1,0],\
-                            [np.sin(rot_rad[1]), 0, np.cos(rot_rad[1])]])
-        psi=np.array([[np.cos(rot_rad[2]), np.sin(rot_rad[2]), 0],\
-                          [-np.sin(rot_rad[2]),np.cos(rot_rad[2]), 0],\
-                          [0,0,1]])
-        rot_matrix=np.dot(np.dot(phi,theta),psi)
-        offset = -(rot_origin-rot_origin.dot(rot_matrix)).dot(np.linalg.inv(rot_matrix))
-        offset = offset - shifts
-        transformed_v = affine_transform(v,rot_matrix,offset=offset,mode=mode)
-        return transformed_v
     
     def makeMasks(self):
         self.cosmask_filter()
